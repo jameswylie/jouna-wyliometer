@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Model } from './DanceWylieDance';
+import Spinner from './Spinner';
 
 export default function App() {
 
   const [animationAction, setAnimationAction] = useState('NlaTrack.005');
   const [priceChange, setPriceChange] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
 
@@ -92,14 +94,26 @@ export default function App() {
 
   };
 
+  const modelIsLoaded = () => {
+
+    setIsLoading(false);
+
+  };
 
   return (
     <>
-      {priceChange &&
+      {priceChange && !isLoading ? (
         <div style={{ padding: '20px', textAlign: 'center', fontWeight: 'bold' }}>
           XRD Price Change: {priceChange}%
         </div>
-      }
+        )
+        :
+        (
+          <div style={{ padding: '20px', textAlign: 'center', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Spinner />
+            <span style={{ marginLeft: '8px' }}>Loading 3D Model...</span>
+          </div>
+        )}
       <Canvas
         camera={{ position: [2, 0, 12.25], fov: 10 }}
         style={{
@@ -113,7 +127,7 @@ export default function App() {
         <ambientLight intensity={1.25} />
         <ambientLight intensity={0.1} />
         <directionalLight intensity={0.4} />
-        <Model position={[0.025, -0.9, 0]} action={animationAction} />
+        <Model position={[0.025, -0.9, 0]} action={animationAction} onLoaded={modelIsLoaded} />
         <OrbitControls />
       </Canvas>
     </>
